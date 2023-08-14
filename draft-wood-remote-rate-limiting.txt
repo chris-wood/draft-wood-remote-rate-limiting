@@ -196,7 +196,7 @@ Table of Contents
 
    3.  Proxies cannot trust targets which cannot authenticate
        themselves, as this can spoofed by attackers (malicious targets).
-       Moreover, authenticating a target does necessarily mean the
+       Moreover, authenticating a target does not necessarily mean the
        target is honest; an authenticated target can still engage in
        malicious behavior.  As such, the rate limiting protocol cannot
        leak information to the the privacy proxy that it does not
