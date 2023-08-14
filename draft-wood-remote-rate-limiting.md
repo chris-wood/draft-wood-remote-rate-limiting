@@ -165,7 +165,7 @@ certificates in the online phase of the protocol.
 
 [[NOTE: this is pretty straightforward -- what more would we actually need to say here?]]
 
-## Online Rule Generation {#online}
+## Online Rate Limit Enforcement {#online}
 
 The online phase of RRL is based on HTTP. Targets, as HTTP clients, send messages to
 a proxy Rule Resource to enact rate limit rules. Each rule is meant to limit the number
@@ -206,7 +206,7 @@ respond to them with a 400 error. Proxies that validate and accept Rule Resource
 respond to them with 200 OK messages. Proxies enforce these rules sent to the Rule Resource
 as described in {{validation-and-enforcement}}.
 
-Sample Rule Resource messages and the scenario to which they would apply are in {{examples}}.
+Sample Rule Resource messages and the scenario to which they would apply are in {{applications}}.
 
 ### Validation and Enforcement {#validation-and-enforcement}
 
@@ -239,28 +239,86 @@ Proxies can enforce valid Rule Resource messages but are not required to do so. 
 means enacting rate limit rules uniformly across all clients to the target; Proxies MUST NOT apply
 any rate limit actions with "scope" equal to "total" on a per-client basis.
 
-### Examples
-
-XXX(caw): include the following:
-- Simple OHTTP rule: limit the number of total requests
-- Port scanning rule: limit the number of connections to a target
-- Excessive bandwidth rule: limit the total amount of bandwidth consumed by the proxy to the target
-
 ## Limitations
 
-<!-- XXX(caw): limited to targets which can authenticate themselves, and cannot detect attacks across targets -->
+The RRL protocol is limited in several important ways:
+
+- RRL is only usable by targets which can authenticate themselves. This means that services which, for example,
+  are not capable of running HTTPS because they have not yet implemented ACME support, will not be able to
+  submit RRL messages.
+- RRL does not support mitigation of attacks that span targets. This is because there is no straightforward
+  way for proxies to authenticate and validate the legitimacy of rate limit requests from two independent
+  targets.
 
 # Applications
 
-[[TODO: OHTTP, MASQUE (TCP/UDP), WireGuard (VPN)]]
+This section contains example applications of RRL that may be used to mitigate attacks enabled
+or otherwise exacerbated by deployed proxy technologies.
+
+## OHTTP DoS
+
+A rule for mitigating OHTTP attacks, which seek to overwhelm the target with too many requests is below.
+In this example, the policy expresses that the target can handle at most 100 requests per minute.
+
+~~~
+{
+   "RateLimit-Limit": 100,
+   "RateLimit-Policy": "60; scope='total'; unit='requests'",
+}
+~~~
+
+Similarly, a rule for mitigating OHTTP attacks due to excessively large messages (larger than 1024B) is below.
+
+~~~
+{
+   "RateLimit-Limit": 1024,
+   "RateLimit-Policy": "60; scope='single'; unit='bandwidth'",
+}
+~~~
+
+Since OHTTP is an application proxy protocol, it is not possible to safely express rate limits that limit
+the number of requests from any one client, as this could be misused by malicious targets to de-anonymize
+clients.
+
+## Port Scanning DoS
+
+A rule for mitigating port scanning attacks, which open many connections to the target server in a short
+amount of time, is shown below. In this example, the threshold for port scanning is determined to be more
+than 10 connections per minute.
+
+~~~
+{
+   "RateLimit-Limit": 10,
+   "RateLimit-Policy": "60; scope='total'; unit='connections'",
+}
+~~~
+
+## Volumetric DoS
+
+A rule for mitigating volumetric attacks, which sends excessive data to the target server in a short
+amount of time, is shown below. In this example, the threshold for port scanning is determined to be more
+than 65536 bytes per connection in a given minute.
+
+~~~
+{
+   "RateLimit-Limit": 65536,
+   "RateLimit-Policy": "1; scope='total'; unit='bandwidth'; w=60",
+}
+~~~
 
 # Security Considerations {#security}
 
-TODO
+The RRL protocol was motivated by the need to ensure that operational security does not regress
+in the name of client privacy. As such, the design of RRL intentionally restricts what sort of
+security mitigations can be enacted in practice. A consequence of this is that certain classes of
+attack may not be mitigated entirely by RRL. For example, in the case of OHTTP, it is not possible
+to limit the number of requests per any single client, since enforcing such a policy might be abused
+by malicious targets to de-anonymize clients. As such, RRL is complementary to other approaches
+for dealing with attacks from individual clients, such as Privacy Pass.
 
 # IANA Considerations {#iana}
 
-<!-- This document has no IANA actions. -->
+This document has no IANA actions.
 
 --- back
 
@@ -268,4 +326,4 @@ TODO
 
 This document was inspired by {{?OHTTP-RateLimit=I-D.rdb-ohai-feedback-to-proxy}},
 which was focused on a variant of the problem addressed by this document and
-tailored specifically work within OHTTP, rather than alongside it.
+tailored specifically to work within OHTTP, rather than alongside it.
