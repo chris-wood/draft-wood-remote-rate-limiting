@@ -30,7 +30,10 @@ informative:
 
 --- abstract
 
-TODO
+This document specifies the remote rate limiting protocol. It is designed
+to enable collaborative rate limiting between privacy proxy providers and
+target services. It is one mechanism amongst others for dealing with abusive
+traffic that negatively affects target services.
 
 --- middle
 
@@ -178,7 +181,13 @@ Proxies are configured with a URL for their RRL Rule Resource, e.g., "https://pr
 Targets connect to the proxy using mutually authenticated TLS with the credentials
 they obtained during the offline registration phase ({{offline}}). Once they connect,
 they send POST messages to the proxy Rule Resource with a JSON object
-({{!RFC8259, Section 4}}). The contents of this JSON object are defined in {{rrl-message}}.
+({{!RFC8259, Section 4}}). The reason that RRL relies on targets pushing messages to
+proxies rather than proxies pulling from targets is to enable on-demand application
+of rate limit rules.
+
+[[NOTE: Pushing vs pulling rate limit rules is somewhat of an implementation detail -- the salient point is that these messages are authenticated]]
+
+The contents of the Rule Resource message JSON object are defined in {{rrl-message}}.
 
 | Field Name        | Value                                                  |
 |:------------------|:-------------------------------------------------------|
