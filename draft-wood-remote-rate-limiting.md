@@ -140,7 +140,7 @@ is based on the following assumptions:
    target is encrypted.
 1. Proxies cannot trust targets which cannot authenticate themselves, as this can
    spoofed by attackers (malicious targets). Moreover, authenticating a target does
-   necessarily mean the target is honest; an authenticated target can still engage
+   not necessarily mean the target is honest; an authenticated target can still engage
    in malicious behavior. As such, the rate limiting protocol cannot leak information
    to the the privacy proxy that it does not already know. In particular, the protocol
    cannot depend on application data that is encrypted and unknown to the proxy.
