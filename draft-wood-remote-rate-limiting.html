@@ -7,7 +7,10 @@
 <title>The Remote Rate Limiting Protocol</title>
 <meta content="Christopher A. Wood" name="author">
 <meta content="
-       TODO 
+       This document specifies the remote rate limiting protocol. It is designed
+to enable collaborative rate limiting between privacy proxy providers and
+target services. It is one mechanism amongst others for dealing with abusive
+traffic that negatively affects target services. 
     " name="description">
 <meta content="xml2rfc 3.17.5" name="generator">
 <meta content="Internet-Draft" name="keyword">
@@ -1082,7 +1085,10 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <h1 id="title">The Remote Rate Limiting Protocol</h1>
 <section id="section-abstract">
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
-<p id="section-abstract-1">TODO<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+<p id="section-abstract-1">This document specifies the remote rate limiting protocol. It is designed
+to enable collaborative rate limiting between privacy proxy providers and
+target services. It is one mechanism amongst others for dealing with abusive
+traffic that negatively affects target services.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 </section>
 <section class="note rfcEditorRemove" id="section-note.1">
       <h2 id="name-discussion-venues">
@@ -1393,7 +1399,11 @@ condition after which the limit resets.<a href="#section-4.2-1" class="pilcrow">
 Targets connect to the proxy using mutually authenticated TLS with the credentials
 they obtained during the offline registration phase (<a href="#offline" class="auto internal xref">Section 4.1</a>). Once they connect,
 they send POST messages to the proxy Rule Resource with a JSON object
-(<span>[<a href="#RFC8259" class="cite xref">RFC8259</a>], <a href="https://rfc-editor.org/rfc/rfc8259#section-4" class="relref">Section 4</a></span>). The contents of this JSON object are defined in <a href="#rrl-message" class="auto internal xref">Table 1</a>.<a href="#section-4.2-2" class="pilcrow">¶</a></p>
+(<span>[<a href="#RFC8259" class="cite xref">RFC8259</a>], <a href="https://rfc-editor.org/rfc/rfc8259#section-4" class="relref">Section 4</a></span>). The reason that RRL relies on targets pushing messages to
+proxies rather than proxies pulling from targets is to enable on-demand application
+of rate limit rules.<a href="#section-4.2-2" class="pilcrow">¶</a></p>
+<p id="section-4.2-3">[[NOTE: Pushing vs pulling rate limit rules is somewhat of an implementation detail -- the salient point is that these messages are authenticated]]<a href="#section-4.2-3" class="pilcrow">¶</a></p>
+<p id="section-4.2-4">The contents of the Rule Resource message JSON object are defined in <a href="#rrl-message" class="auto internal xref">Table 1</a>.<a href="#section-4.2-4" class="pilcrow">¶</a></p>
 <span id="name-rrl-rule-resource-message"></span><div id="rrl-message">
 <table class="center" id="table-1">
           <caption>
@@ -1426,29 +1436,29 @@ they send POST messages to the proxy Rule Resource with a JSON object
           </tbody>
         </table>
 </div>
-<p id="section-4.2-4">The "unit" parameter for the RateLimit-Policy field has the following permissible values:<a href="#section-4.2-4" class="pilcrow">¶</a></p>
+<p id="section-4.2-6">The "unit" parameter for the RateLimit-Policy field has the following permissible values:<a href="#section-4.2-6" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-4.2-5.1">requests: This means the rate limit quota applies to HTTP requests. This is only enforceable
-by a proxy if it can see requests, e.g., if it is an OHTTP Relay Resource (see <span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-ohai-ohttp-09#section-2" class="relref">Section 2</a> of [<a href="#OHTTP" class="cite xref">OHTTP</a>]</span>).<a href="#section-4.2-5.1" class="pilcrow">¶</a>
+<li class="normal" id="section-4.2-7.1">requests: This means the rate limit quota applies to HTTP requests. This is only enforceable
+by a proxy if it can see requests, e.g., if it is an OHTTP Relay Resource (see <span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-ohai-ohttp-09#section-2" class="relref">Section 2</a> of [<a href="#OHTTP" class="cite xref">OHTTP</a>]</span>).<a href="#section-4.2-7.1" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-4.2-5.2">connections: This means the rate limit quota applies to number of connections.<a href="#section-4.2-5.2" class="pilcrow">¶</a>
+          <li class="normal" id="section-4.2-7.2">connections: This means the rate limit quota applies to number of connections.<a href="#section-4.2-7.2" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-4.2-5.3">bandwidth: This means the rate limit applies to the bandwidth consumed by a given connection or request.<a href="#section-4.2-5.3" class="pilcrow">¶</a>
+          <li class="normal" id="section-4.2-7.3">bandwidth: This means the rate limit applies to the bandwidth consumed by a given connection or request.<a href="#section-4.2-7.3" class="pilcrow">¶</a>
 </li>
         </ul>
-<p id="section-4.2-6">The "scope" parameter for the RateLimit-Policy field has the following permissible values:<a href="#section-4.2-6" class="pilcrow">¶</a></p>
+<p id="section-4.2-8">The "scope" parameter for the RateLimit-Policy field has the following permissible values:<a href="#section-4.2-8" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-4.2-7.1">total: This means the rate limit quota applies to all client traffic from the proxy to the target.<a href="#section-4.2-7.1" class="pilcrow">¶</a>
+<li class="normal" id="section-4.2-9.1">total: This means the rate limit quota applies to all client traffic from the proxy to the target.<a href="#section-4.2-9.1" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-4.2-7.2">single: This means the rate limit quota applies to individual client traffic from proxy to target.<a href="#section-4.2-7.2" class="pilcrow">¶</a>
+          <li class="normal" id="section-4.2-9.2">single: This means the rate limit quota applies to individual client traffic from proxy to target.<a href="#section-4.2-9.2" class="pilcrow">¶</a>
 </li>
         </ul>
-<p id="section-4.2-8">Proxies MUST validate the values received in the Rule Resource message fields as described
+<p id="section-4.2-10">Proxies MUST validate the values received in the Rule Resource message fields as described
 in <a href="#validation-and-enforcement" class="auto internal xref">Section 4.2.1</a>. Proxies MAY ignore malformed Rule Resource messages and
 respond to them with a 400 error. Proxies that validate and accept Rule Resource messages
 respond to them with 200 OK messages. Proxies enforce these rules sent to the Rule Resource
-as described in <a href="#validation-and-enforcement" class="auto internal xref">Section 4.2.1</a>.<a href="#section-4.2-8" class="pilcrow">¶</a></p>
-<p id="section-4.2-9">Sample Rule Resource messages and the scenario to which they would apply are in <a href="#applications" class="auto internal xref">Section 5</a>.<a href="#section-4.2-9" class="pilcrow">¶</a></p>
+as described in <a href="#validation-and-enforcement" class="auto internal xref">Section 4.2.1</a>.<a href="#section-4.2-10" class="pilcrow">¶</a></p>
+<p id="section-4.2-11">Sample Rule Resource messages and the scenario to which they would apply are in <a href="#applications" class="auto internal xref">Section 5</a>.<a href="#section-4.2-11" class="pilcrow">¶</a></p>
 <div id="validation-and-enforcement">
 <section id="section-4.2.1">
           <h4 id="name-validation-and-enforcement">
