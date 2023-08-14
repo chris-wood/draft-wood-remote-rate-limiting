@@ -1156,13 +1156,10 @@ svg :is([fill="white"], [fill^="#fff"]) {
                 <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="auto internal xref">4.1</a>.  <a href="#name-offline-registration" class="internal xref">Offline Registration</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2">
-                <p id="section-toc.1-1.4.2.2.1"><a href="#section-4.2" class="auto internal xref">4.2</a>.  <a href="#name-online-rule-generation" class="internal xref">Online Rule Generation</a></p>
+                <p id="section-toc.1-1.4.2.2.1"><a href="#section-4.2" class="auto internal xref">4.2</a>.  <a href="#name-online-rate-limit-enforceme" class="internal xref">Online Rate Limit Enforcement</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2.2.1">
                     <p id="section-toc.1-1.4.2.2.2.1.1"><a href="#section-4.2.1" class="auto internal xref">4.2.1</a>.  <a href="#name-validation-and-enforcement" class="internal xref">Validation and Enforcement</a></p>
-</li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2.2.2">
-                    <p id="section-toc.1-1.4.2.2.2.2.1"><a href="#section-4.2.2" class="auto internal xref">4.2.2</a>.  <a href="#name-examples" class="internal xref">Examples</a></p>
 </li>
                 </ul>
 </li>
@@ -1173,6 +1170,17 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
             <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-applications" class="internal xref">Applications</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1">
+                <p id="section-toc.1-1.5.2.1.1"><a href="#section-5.1" class="auto internal xref">5.1</a>.  <a href="#name-ohttp-dos" class="internal xref">OHTTP DoS</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.2">
+                <p id="section-toc.1-1.5.2.2.1"><a href="#section-5.2" class="auto internal xref">5.2</a>.  <a href="#name-port-scanning-dos" class="internal xref">Port Scanning DoS</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.3">
+                <p id="section-toc.1-1.5.2.3.1"><a href="#section-5.3" class="auto internal xref">5.3</a>.  <a href="#name-volumetric-dos" class="internal xref">Volumetric DoS</a></p>
+</li>
+            </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
             <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
@@ -1372,8 +1380,8 @@ certificates in the online phase of the protocol.<a href="#section-4.1-1" class=
 </div>
 <div id="online">
 <section id="section-4.2">
-        <h3 id="name-online-rule-generation">
-<a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-online-rule-generation" class="section-name selfRef">Online Rule Generation</a>
+        <h3 id="name-online-rate-limit-enforceme">
+<a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-online-rate-limit-enforceme" class="section-name selfRef">Online Rate Limit Enforcement</a>
         </h3>
 <p id="section-4.2-1">The online phase of RRL is based on HTTP. Targets, as HTTP clients, send messages to
 a proxy Rule Resource to enact rate limit rules. Each rule is meant to limit the number
@@ -1440,7 +1448,7 @@ in <a href="#validation-and-enforcement" class="auto internal xref">Section 4.2.
 respond to them with a 400 error. Proxies that validate and accept Rule Resource messages
 respond to them with 200 OK messages. Proxies enforce these rules sent to the Rule Resource
 as described in <a href="#validation-and-enforcement" class="auto internal xref">Section 4.2.1</a>.<a href="#section-4.2-8" class="pilcrow">¶</a></p>
-<p id="section-4.2-9">Sample Rule Resource messages and the scenario to which they would apply are in <a href="#examples" class="auto internal xref">Section 4.2.2</a>.<a href="#section-4.2-9" class="pilcrow">¶</a></p>
+<p id="section-4.2-9">Sample Rule Resource messages and the scenario to which they would apply are in <a href="#applications" class="auto internal xref">Section 5</a>.<a href="#section-4.2-9" class="pilcrow">¶</a></p>
 <div id="validation-and-enforcement">
 <section id="section-4.2.1">
           <h4 id="name-validation-and-enforcement">
@@ -1480,17 +1488,6 @@ means enacting rate limit rules uniformly across all clients to the target; Prox
 any rate limit actions with "scope" equal to "total" on a per-client basis.<a href="#section-4.2.1-8" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="examples">
-<section id="section-4.2.2">
-          <h4 id="name-examples">
-<a href="#section-4.2.2" class="section-number selfRef">4.2.2. </a><a href="#name-examples" class="section-name selfRef">Examples</a>
-          </h4>
-<p id="section-4.2.2-1">XXX(caw): include the following:
-- Simple OHTTP rule: limit the number of total requests
-- Port scanning rule: limit the number of connections to a target
-- Excessive bandwidth rule: limit the total amount of bandwidth consumed by the proxy to the target<a href="#section-4.2.2-1" class="pilcrow">¶</a></p>
-</section>
-</div>
 </section>
 </div>
 <div id="limitations">
@@ -1498,6 +1495,17 @@ any rate limit actions with "scope" equal to "total" on a per-client basis.<a hr
         <h3 id="name-limitations">
 <a href="#section-4.3" class="section-number selfRef">4.3. </a><a href="#name-limitations" class="section-name selfRef">Limitations</a>
         </h3>
+<p id="section-4.3-1">The RRL protocol is limited in several important ways:<a href="#section-4.3-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.3-2.1">RRL is only usable by targets which can authenticate themselves. This means that services which, for example,
+are not capable of running HTTPS because they have not yet implemented ACME support, will not be able to
+submit RRL messages.<a href="#section-4.3-2.1" class="pilcrow">¶</a>
+</li>
+          <li class="normal" id="section-4.3-2.2">RRL does not support mitigation of attacks that span targets. This is because there is no straightforward
+way for proxies to authenticate and validate the legitimacy of rate limit requests from two independent
+targets.<a href="#section-4.3-2.2" class="pilcrow">¶</a>
+</li>
+        </ul>
 </section>
 </div>
 </section>
@@ -1507,7 +1515,73 @@ any rate limit actions with "scope" equal to "total" on a per-client basis.<a hr
       <h2 id="name-applications">
 <a href="#section-5" class="section-number selfRef">5. </a><a href="#name-applications" class="section-name selfRef">Applications</a>
       </h2>
-<p id="section-5-1">[[TODO: OHTTP, MASQUE (TCP/UDP), WireGuard (VPN)]]<a href="#section-5-1" class="pilcrow">¶</a></p>
+<p id="section-5-1">This section contains example applications of RRL that may be used to mitigate attacks enabled
+or otherwise exacerbated by deployed proxy technologies.<a href="#section-5-1" class="pilcrow">¶</a></p>
+<div id="ohttp-dos">
+<section id="section-5.1">
+        <h3 id="name-ohttp-dos">
+<a href="#section-5.1" class="section-number selfRef">5.1. </a><a href="#name-ohttp-dos" class="section-name selfRef">OHTTP DoS</a>
+        </h3>
+<p id="section-5.1-1">A rule for mitigating OHTTP attacks, which seek to overwhelm the target with too many requests is below.
+In this example, the policy expresses that the target can handle at most 100 requests per minute.<a href="#section-5.1-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5.1-2">
+<pre>
+{
+   "RateLimit-Limit": 100,
+   "RateLimit-Policy": "60; scope='total'; unit='requests'",
+}
+</pre><a href="#section-5.1-2" class="pilcrow">¶</a>
+</div>
+<p id="section-5.1-3">Similarly, a rule for mitigating OHTTP attacks due to excessively large messages (larger than 1024B) is below.<a href="#section-5.1-3" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5.1-4">
+<pre>
+{
+   "RateLimit-Limit": 1024,
+   "RateLimit-Policy": "60; scope='single'; unit='bandwidth'",
+}
+</pre><a href="#section-5.1-4" class="pilcrow">¶</a>
+</div>
+<p id="section-5.1-5">Since OHTTP is an application proxy protocol, it is not possible to safely express rate limits that limit
+the number of requests from any one client, as this could be misused by malicious targets to de-anonymize
+clients.<a href="#section-5.1-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="port-scanning-dos">
+<section id="section-5.2">
+        <h3 id="name-port-scanning-dos">
+<a href="#section-5.2" class="section-number selfRef">5.2. </a><a href="#name-port-scanning-dos" class="section-name selfRef">Port Scanning DoS</a>
+        </h3>
+<p id="section-5.2-1">A rule for mitigating port scanning attacks, which open many connections to the target server in a short
+amount of time, is shown below. In this example, the threshold for port scanning is determined to be more
+than 10 connections per minute.<a href="#section-5.2-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5.2-2">
+<pre>
+{
+   "RateLimit-Limit": 10,
+   "RateLimit-Policy": "60; scope='total'; unit='connections'",
+}
+</pre><a href="#section-5.2-2" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="volumetric-dos">
+<section id="section-5.3">
+        <h3 id="name-volumetric-dos">
+<a href="#section-5.3" class="section-number selfRef">5.3. </a><a href="#name-volumetric-dos" class="section-name selfRef">Volumetric DoS</a>
+        </h3>
+<p id="section-5.3-1">A rule for mitigating volumetric attacks, which sends excessive data to the target server in a short
+amount of time, is shown below. In this example, the threshold for port scanning is determined to be more
+than 65536 bytes per connection in a given minute.<a href="#section-5.3-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5.3-2">
+<pre>
+{
+   "RateLimit-Limit": 65536,
+   "RateLimit-Policy": "1; scope='total'; unit='bandwidth'; w=60",
+}
+</pre><a href="#section-5.3-2" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
 </section>
 </div>
 <div id="security">
@@ -1515,7 +1589,13 @@ any rate limit actions with "scope" equal to "total" on a per-client basis.<a hr
       <h2 id="name-security-considerations">
 <a href="#section-6" class="section-number selfRef">6. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
       </h2>
-<p id="section-6-1">TODO<a href="#section-6-1" class="pilcrow">¶</a></p>
+<p id="section-6-1">The RRL protocol was motivated by the need to ensure that operational security does not regress
+in the name of client privacy. As such, the design of RRL intentionally restricts what sort of
+security mitigations can be enacted in practice. A consequence of this is that certain classes of
+attack may not be mitigated entirely by RRL. For example, in the case of OHTTP, it is not possible
+to limit the number of requests per any single client, since enforcing such a policy might be abused
+by malicious targets to de-anonymize clients. As such, RRL is complementary to other approaches
+for dealing with attacks from individual clients, such as Privacy Pass.<a href="#section-6-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="iana">
@@ -1523,6 +1603,7 @@ any rate limit actions with "scope" equal to "total" on a per-client basis.<a hr
       <h2 id="name-iana-considerations">
 <a href="#section-7" class="section-number selfRef">7. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
       </h2>
+<p id="section-7-1">This document has no IANA actions.<a href="#section-7-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <section id="section-8">
@@ -1587,7 +1668,7 @@ any rate limit actions with "scope" equal to "total" on a per-client basis.<a hr
       </h2>
 <p id="appendix-A-1">This document was inspired by <span>[<a href="#OHTTP-RateLimit" class="cite xref">OHTTP-RateLimit</a>]</span>,
 which was focused on a variant of the problem addressed by this document and
-tailored specifically work within OHTTP, rather than alongside it.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
+tailored specifically to work within OHTTP, rather than alongside it.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="authors-addresses">
