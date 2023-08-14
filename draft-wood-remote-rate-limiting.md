@@ -24,7 +24,9 @@ author:
 normative:
 
 informative:
-  WIREGUARD: XXX
+  WIREGUARD:
+   title: "WireGuard: Next Generation Kernel Network Tunnel"
+   target: https://www.ndss-symposium.org/wp-content/uploads/2017/09/ndss2017_04A-3_Donenfeld_paper.pdf
 
 --- abstract
 
@@ -34,8 +36,8 @@ TODO
 
 # Introduction
 
-Privacy proxy systems such as those built on MASQUE {{?CONNECT-UDP=XXX}},
-Oblivious HTTP {{?OHTTP=I-D.ietf-ohai-ohttp}}, and WireGuard {{WIREGUARD}}
+Privacy proxy systems such as those built on MASQUE {{?CONNECT-UDP=RFC9298}},
+Oblivious HTTP {{?OHTTP=I-D.ietf-ohai-ohttp}}, and WireGuard {{WIREGUARD}}.
 provide one common feature: they mask a client's true IP address from the
 targets to which clients interact with through these proxies. While this
 offers meaningful privacy benefits to clients, it complicates common
