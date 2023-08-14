@@ -91,6 +91,14 @@ Target:
 Proxy:
 : An entity that sits between client and target.
 
+Application proxy:
+: A proxy that relays application messages between client and target,
+  such as an OHTTP Oblivious Relay Resource.
+
+Transport proxy:
+: A proxy that relays end-to-end transport connections between client
+  and target, such as a MASQUE proxy or WireGuard VPN proxy.
+
 # Threat Model
 
 The remote rate limiting (RRL) protocol is based on the following threat model.
@@ -111,7 +119,8 @@ Malicious clients can engage in abusive behavior with the intent of disrupting s
 for honest targets, or for negatively impacting the proxy service for other honest
 clients.
 
-XXX(caw): is the proxy honest or malicious? Probably honest, since otherwise it could just send abusive traffic or break client privacy
+The proxy is assumed to be honest, since a malicious proxy could easily violate
+client privacy by revealing the client's IP address to targets.
 
 # Overview
 
@@ -121,6 +130,14 @@ is based on the following assumptions:
 1. The definition of abuse varies widely and depends on the target service.
    In other words, targets are authoritative for what is considered abusive traffic
    that negatively affects the target.
+1. Rate limiting rules can only be expressed in terms of behavior that can be validated
+   by both proxy and taget. Importantly, this means that targets can only express rules
+   in terms of information that both parties know. In other words, targets cannot express
+   rules in terms of information they do not know. As an example, it is not possible to
+   express rules in terms of the number of requests per client if the target does not know
+   how many clients are behind a particular client, nor if the proxy does not know the number
+   of requests that a particular client is sending because the client's connection to the
+   target is encrypted.
 1. Proxies cannot trust targets which cannot authenticate themselves, as this can
    spoofed by attackers (malicious targets). Moreover, authenticating a target does
    necessarily mean the target is honest; an authenticated target can still engage
@@ -133,9 +150,6 @@ is based on the following assumptions:
    particular, this means that proxies cannot use target IP addresses to determine
    whether or not a particular target message is authenticated.
 
-1. XXX(caw): target should not be able to learn information based on the rule being enacted
- example: OHTTP with two clients vs OHTTP with 100 clients, and using rate limit to learn info about the set size
-
 The protocol is divided into two phases: an offline registration phase ({{offline}}),
 wherein targets obtain authentication material used for the online phase of the protocol,
 and an online phase ({{online}}), wherein targets send rate limiting rules to the proxy
@@ -143,19 +157,15 @@ for enactment. Details about each phase are below.
 
 ## Offline Registration {#offline}
 
-<!-- XXX(caw): describe how targets use ACME for registration -->
-
 Registration is built on ACME, which is a protocol for obtaining authentication credentials
 in the form of a certificate. Targets run the ACME protocol with a proxy to obtain
-RRL authentication certificates. The certificate that's issued MUST have the clientAuthentication
+RRL authentication certificates. The certificate issued MUST have the Client Authentication
 EKU configured, as it will be used for authenticating the client. They then use these
 certificates in the online phase of the protocol.
 
 [[NOTE: this is pretty straightforward -- what more would we actually need to say here?]]
 
 ## Online Rule Generation {#online}
-
-<!-- XXX(caw): describe how rules are encoded and how they're sent to the proxy -->
 
 The online phase of RRL is based on HTTP. Targets, as HTTP clients, send messages to
 a proxy Rule Resource to enact rate limit rules. Each rule is meant to limit the number
@@ -173,16 +183,10 @@ they send POST messages to the proxy Rule Resource with a JSON object
 | Field Name        | Value                                                  |
 |:------------------|:-------------------------------------------------------|
 | Target (optional) | Name of the target |
-| RateLimit-Limit   | As defined in {{Section 5.1 of RATE-LIMIT}}, except that parameters are not permitted, encoded as a JSON string. |
-| RateLimit-Policy  | As defined in {{Section 5.2 of RATE-LIMIT}}, except that parameters other than "unit" are not permitted, encoded as a JSON string. |
-| RateLimit-Reset   | As defined in {{Section 5.4 of RATE-LIMIT}}, except that parameters are not permitted, encoded as a JSON string. |
+| RateLimit-Limit   | As defined in {{Section 5.1 of RATE-LIMIT}} except that parameters are not permitted, encoded as a JSON string. |
+| RateLimit-Policy  | As defined in {{Section 5.2 of RATE-LIMIT}} except that parameters other than "unit" and "scope" are not permitted, encoded as a JSON string. |
+| RateLimit-Reset   | As defined in {{Section 5.4 of RATE-LIMIT}} except that parameters are not permitted, encoded as a JSON string. |
 {: #rrl-message title="RRL Rule Resource message"}
-
-Proxies MUST validate the values received in the Rule Resource message fields before
-using them and check if there are (significant) discrepancies with the expected ones.
-This includes a RateLimit-Reset field moment too far in the future, a policy limit
-too high, or fields with disallowed parameters. Proxies MAY ignore malformed Rule
-Resource messages and respond to them with a 400 error.
 
 The "unit" parameter for the RateLimit-Policy field has the following permissible values:
 
@@ -191,16 +195,56 @@ by a proxy if it can see requests, e.g., if it is an OHTTP Relay Resource (see {
 - connections: This means the rate limit quota applies to number of connections.
 - bandwidth: This means the rate limit applies to the bandwidth consumed by a given connection or request.
 
-Proxies that validate and accept Rule Resource messages respond to them with 200 OK messages.
+The "scope" parameter for the RateLimit-Policy field has the following permissible values:
+
+- total: This means the rate limit quota applies to all client traffic from the proxy to the target.
+- single: This means the rate limit quota applies to individual client traffic from proxy to target.
+
+Proxies MUST validate the values received in the Rule Resource message fields as described
+in {{validation-and-enforcement}}. Proxies MAY ignore malformed Rule Resource messages and
+respond to them with a 400 error. Proxies that validate and accept Rule Resource messages
+respond to them with 200 OK messages. Proxies enforce these rules sent to the Rule Resource
+as described in {{validation-and-enforcement}}.
 
 Sample Rule Resource messages and the scenario to which they would apply are in {{examples}}.
+
+### Validation and Enforcement {#validation-and-enforcement}
+
+Rule Resource message validity depends on the proxy's behavior and, in particular, whether
+the proxy is an application or transport proxy. Application proxies can observe the client
+request boundaries, but cannot view their contents. In contrast, transport proxies can only
+observe connection boundaries and cannot view request boundaries. As such, validation rules
+are different depending on the type of proxy, though there are some general Rule Resource
+message validation steps that apply to both. These common rules are as follows:
+
+- Check that the RateLimit-Reset field is not too far in the future.
+- Check that the RateLimit-Limit is not too high.
+- Check that the RateLimit-Limit, RateLimit-Policy, and RateLimit-Reset fields do not contain any unexpected parameters.
+
+Beyond these general validation rules, the validation rules for application proxies are as follows:
+
+- Check that the RateLimit-Policy "unit" parameter is present and has the value "requests" if the "scope" parameter is "total",
+  else the "unit" parameter has the value "bandwidth." This has the effect of limiting total number of requests to
+  the target or the size of any one request.
+
+Likewise, beyond the general validation rules above, the validation rules for transport proxies are as follows:
+
+- Check that the RateLimit-Policy "unit" parameter is present and has the value "connections" if the "scope" parameter is "total",
+  else the "unit" parameter has the value "bandwidth." This has the effect of limiting total number of connections to
+  the target or the bandwidth consumed by any one connection.
+
+If all checks pass, then the message is considered valid.
+
+Proxies can enforce valid Rule Resource messages but are not required to do so. Enforcing a message
+means enacting rate limit rules uniformly across all clients to the target; Proxies MUST NOT apply
+any rate limit actions with "scope" equal to "total" on a per-client basis.
 
 ### Examples
 
 XXX(caw): include the following:
-- Simple OHTTP rule
-- Port scanning rule
-- Excessive bandwidth rule
+- Simple OHTTP rule: limit the number of total requests
+- Port scanning rule: limit the number of connections to a target
+- Excessive bandwidth rule: limit the total amount of bandwidth consumed by the proxy to the target
 
 ## Limitations
 
@@ -208,7 +252,7 @@ XXX(caw): include the following:
 
 # Applications
 
-XXX(caw): OHTTP, MASQUE (TCP/UDP), WireGuard (VPN)
+[[TODO: OHTTP, MASQUE (TCP/UDP), WireGuard (VPN)]]
 
 # Security Considerations {#security}
 
