@@ -53,7 +53,7 @@ in abusive behavior.
 
 Proactively preventing abuse through (privacy-preserving) client authentication
 is one alternative solution that can help mitigate such abuse in practice.
-In particular, proxies can only admit service to authentiated clients, or 
+In particular, proxies can only admit service to authentiated clients, or
 targets can use privacy-preserving authentication protocols such as Privacy
 Pass {{?PRIVACY-PASS=I-D.ietf-privacypass-architecture}} to admit client traffic.
 Another type of solution might be in form of some "humanity check" such as a
