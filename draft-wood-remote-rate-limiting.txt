@@ -553,6 +553,9 @@ Appendix A.  Acknowledgements
    a variant of the problem addressed by this document and tailored
    specifically to work within OHTTP, rather than alongside it.
 
+   This document was improved by contributions and feedback from Lucas
+   Pardue and Tommy Pauly.
+
 Author's Address
 
    Christopher A. Wood
