@@ -138,7 +138,7 @@ is based on the following assumptions:
    in terms of information that both parties know. In other words, targets cannot express
    rules in terms of information they do not know. As an example, it is not possible to
    express rules in terms of the number of requests per client if the target does not know
-   how many clients are behind a particular client, nor if the proxy does not know the number
+   how many clients are behind a particular proxy, nor if the proxy does not know the number
    of requests that a particular client is sending because the client's connection to the
    target is encrypted.
 1. Proxies cannot trust targets which cannot authenticate themselves, as this can
