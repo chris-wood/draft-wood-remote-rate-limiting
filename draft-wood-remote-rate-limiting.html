@@ -1632,6 +1632,11 @@ attack may not be mitigated entirely by RRL. For example, in the case of OHTTP, 
 to limit the number of requests per any single client, since enforcing such a policy might be abused
 by malicious targets to de-anonymize clients. As such, RRL is complementary to other approaches
 for dealing with attacks from individual clients, such as Privacy Pass.<a href="#section-6-1" class="pilcrow">¶</a></p>
+<p id="section-6-2">The RRL protocol is designed to allow any target which can authenticate itself to send rate limit
+rules to the proxy. Each rate limit rule does require the proxy to store state for enacting the rule.
+As such, absent restrictions, malicious targets could abuse this mechanism to exhaust resources
+on the proxy. In settings where this is a problem, proxies SHOULD apply some form of allow list
+for targets to ensure that state does not grow unbounded.<a href="#section-6-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="iana">
