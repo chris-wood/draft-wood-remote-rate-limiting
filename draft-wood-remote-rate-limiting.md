@@ -344,6 +344,12 @@ to limit the number of requests per any single client, since enforcing such a po
 by malicious targets to de-anonymize clients. As such, RRL is complementary to other approaches
 for dealing with attacks from individual clients, such as Privacy Pass.
 
+The RRL protocol is designed to allow any target which can authenticate itself to send rate limit
+rules to the proxy. Each rate limit rule does require the proxy to store state for enacting the rule.
+As such, absent restrictions, malicious targets could abuse this mechanism to exhaust resources
+on the proxy. In settings where this is a problem, proxies SHOULD apply some form of allow list
+for targets to ensure that state does not grow unbounded.
+
 # IANA Considerations {#iana}
 
 This document has no IANA actions.
