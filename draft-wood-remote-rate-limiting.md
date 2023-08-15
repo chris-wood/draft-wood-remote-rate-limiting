@@ -361,3 +361,5 @@ This document has no IANA actions.
 This document was inspired by {{?OHTTP-RateLimit=I-D.rdb-ohai-feedback-to-proxy}},
 which was focused on a variant of the problem addressed by this document and
 tailored specifically to work within OHTTP, rather than alongside it.
+
+This document was improved by contributions and feedback from Lucas Pardue and Tommy Pauly.
