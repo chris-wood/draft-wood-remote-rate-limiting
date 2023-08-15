@@ -4,8 +4,8 @@
 
 Network Working Group                                         C. A. Wood
 Internet-Draft                                                Cloudflare
-Intended status: Standards Track                          14 August 2023
-Expires: 15 February 2024
+Intended status: Standards Track                          15 August 2023
+Expires: 16 February 2024
 
 
                    The Remote Rate Limiting Protocol
@@ -41,7 +41,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 15 February 2024.
+   This Internet-Draft will expire on 16 February 2024.
 
 Copyright Notice
 
@@ -65,7 +65,8 @@ Table of Contents
    4.  Overview
      4.1.  Offline Registration
      4.2.  Online Rate Limit Enforcement
-       4.2.1.  Validation and Enforcement
+       4.2.1.  Authentication
+       4.2.2.  Validation and Enforcement
      4.3.  Limitations
    5.  Applications
      5.1.  OHTTP DoS
@@ -214,6 +215,12 @@ Table of Contents
        cannot use target IP addresses to determine whether or not a
        particular target message is authenticated.
 
+   RRL assumes that proxies are public, i.e., that targets have some
+   realiable means of discovering or learning about a proxy.  RRL is
+   therefore not applicable to deployment scenarios where the proxy is
+   meant to be private or otherwise does not seek to make its presence
+   known to targets.
+
    The protocol is divided into two phases: an offline registration
    phase (Section 4.1), wherein targets obtain authentication material
    used for the online phase of the protocol, and an online phase
@@ -244,11 +251,10 @@ Table of Contents
    after which the limit resets.
 
    Proxies are configured with a URL for their RRL Rule Resource, e.g.,
-   "https://proxy.example/.well-known/rrl-rules".  Targets connect to
-   the proxy using mutually authenticated TLS with the credentials they
-   obtained during the offline registration phase (Section 4.1).  Once
-   they connect, they send POST messages to the proxy Rule Resource with
-   a JSON object ([RFC8259], Section 4).  The reason that RRL relies on
+   "https://proxy.example/.well-known/rrl-rules".  Targets send POST
+   messages to the proxy Rule Resource with a JSON object ([RFC8259],
+   Section 4).  Section 4.2.1 describes the mechanism by which these
+   requests are authenticated.  Note that the reason that RRL relies on
    targets pushing messages to proxies rather than proxies pulling from
    targets is to enable on-demand application of rate limit rules.
 
@@ -305,16 +311,41 @@ Table of Contents
       client traffic from proxy to target.
 
    Proxies MUST validate the values received in the Rule Resource
-   message fields as described in Section 4.2.1.  Proxies MAY ignore
+   message fields as described in Section 4.2.2.  Proxies MAY ignore
    malformed Rule Resource messages and respond to them with a 400
    error.  Proxies that validate and accept Rule Resource messages
    respond to them with 200 OK messages.  Proxies enforce these rules
-   sent to the Rule Resource as described in Section 4.2.1.
+   sent to the Rule Resource as described in Section 4.2.2.
 
    Sample Rule Resource messages and the scenario to which they would
    apply are in Section 5.
 
-4.2.1.  Validation and Enforcement
+4.2.1.  Authentication
+
+   Rule Resource messages are authenticated using credentials obtained
+   during the offline registration phase.  There are several options for
+   request authentication, including those below:
+
+   *  Mutually authenticated TLS.  In this option, targets establish a
+      mutually authenticated TLS connection to the proxy, using their
+      credentials, before sending any Rule Resource messages.
+
+   *  Message signing.  In this option, targets sign the content of the
+      Rule Resource message using their credentials and produce a
+      signature according to Section 3.1 of [MESSAGE-SIGNATURES].
+      Proxies verify the signature using the credentials according to
+      Section 3.2 of [MESSAGE-SIGNATURES].
+
+   [[OPEN ISSUE: The HTTP message signature keyid needs to contain
+   enough information for the proxy to obtain the credentials used for
+   verifying the signature, so it's tightly bound to the way
+   registration works.  This is not specified now and needs more
+   thought.]]
+
+   Proxies authenticate requests using one of these options (or
+   something with similar properties).
+
+4.2.2.  Validation and Enforcement
 
    Rule Resource message validity depends on the proxy's behavior and,
    in particular, whether the proxy is an application or transport
@@ -447,6 +478,13 @@ Table of Contents
 8.  References
 
 8.1.  Normative References
+
+   [MESSAGE-SIGNATURES]
+              Backman, A., Richer, J., and M. Sporny, "HTTP Message
+              Signatures", Work in Progress, Internet-Draft, draft-ietf-
+              httpbis-message-signatures-19, 26 July 2023,
+              <https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-
+              message-signatures-19>.
 
    [RATE-LIMIT]
               Polli, R. and A. M. Ruiz, "RateLimit header fields for
