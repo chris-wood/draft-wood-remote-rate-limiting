@@ -153,6 +153,11 @@ is based on the following assumptions:
    particular, this means that proxies cannot use target IP addresses to determine
    whether or not a particular target message is authenticated.
 
+RRL assumes that proxies are public, i.e., that targets have some realiable means
+of discovering or learning about a proxy. RRL is therefore not applicable to deployment
+scenarios where the proxy is meant to be private or otherwise does not seek to make its
+presence known to targets.
+
 The protocol is divided into two phases: an offline registration phase ({{offline}}),
 wherein targets obtain authentication material used for the online phase of the protocol,
 and an online phase ({{online}}), wherein targets send rate limiting rules to the proxy
@@ -178,12 +183,11 @@ rate limits represent some limit, a policy (in terms of quota-units), and a time
 condition after which the limit resets.
 
 Proxies are configured with a URL for their RRL Rule Resource, e.g., "https://proxy.example/.well-known/rrl-rules".
-Targets connect to the proxy using mutually authenticated TLS with the credentials
-they obtained during the offline registration phase ({{offline}}). Once they connect,
-they send POST messages to the proxy Rule Resource with a JSON object
-({{!RFC8259, Section 4}}). The reason that RRL relies on targets pushing messages to
-proxies rather than proxies pulling from targets is to enable on-demand application
-of rate limit rules.
+Targets send POST messages to the proxy Rule Resource with a JSON object
+({{!RFC8259, Section 4}}). {{authentication}} describes the mechanism by which
+these requests are authenticated. Note that the reason that RRL relies on targets
+pushing messages to proxies rather than proxies pulling from targets is to enable
+on-demand application of rate limit rules.
 
 [[NOTE: Pushing vs pulling rate limit rules is somewhat of an implementation detail -- the salient point is that these messages are authenticated]]
 
@@ -216,6 +220,21 @@ respond to them with 200 OK messages. Proxies enforce these rules sent to the Ru
 as described in {{validation-and-enforcement}}.
 
 Sample Rule Resource messages and the scenario to which they would apply are in {{applications}}.
+
+### Authentication
+
+Rule Resource messages are authenticated using credentials obtained during the offline registration phase.
+There are several options for request authentication, including those below:
+
+- Mutually authenticated TLS. In this option, targets establish a mutually authenticated TLS connection
+  to the proxy, using their credentials, before sending any Rule Resource messages.
+- Message signing. In this option, targets sign the content of the Rule Resource message using
+  their credentials and produce a signature according to {{Section 3.1 of !MESSAGE-SIGNATURES=I-D.ietf-httpbis-message-signatures}}.
+  Proxies verify the signature using the credentials according to {{Section 3.2 of MESSAGE-SIGNATURES}}.
+
+[[OPEN ISSUE: The HTTP message signature keyid needs to contain enough information for the proxy to obtain the credentials used for verifying the signature, so it's tightly bound to the way registration works. This is not specified now and needs more thought.]]
+
+Proxies authenticate requests using one of these options (or something with similar properties).
 
 ### Validation and Enforcement {#validation-and-enforcement}
 
