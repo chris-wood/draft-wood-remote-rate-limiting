@@ -111,9 +111,10 @@ including abusive behavior. Targets can also be honest or malicious. An honest
 target will faithfully use the protocol to protect itself against abuse, whereas
 a malicious target will try to use the protocol to carry out the following goals.
 
-1. De-anonymize honest clients. The attacker aims to use the rate limiting protocol
-   to violate whatever privacy properties the proxy purports to provide for its
-   clients.
+1. Learn information about clients. The attacker aims to use the rate limiting
+   protocol to learn information about the clients behind a proxy. This information
+   might include, for example, the total number of clients behind a proxy, or any
+   other information that might be useful in partitioning client anonymity sets.
 1. Disproportionately and negatively impact honest clients. The attacker aims to
    misuse the rate limiting protocol to single out honest clients and cause service
    disruption for them.
@@ -161,7 +162,27 @@ presence known to targets.
 The protocol is divided into two phases: an offline registration phase ({{offline}}),
 wherein targets obtain authentication material used for the online phase of the protocol,
 and an online phase ({{online}}), wherein targets send rate limiting rules to the proxy
-for enactment. Details about each phase are below.
+for enactment. The relationship between these two phases is shown in {{fig-overview}}.
+Details about each phase are in the following sections.
+
+~~~ aasvg
+
+  +--------+         +-------+         +--------+
+  | Client |         | Proxy |         | Target |
+  +---+----+         +---+---+         +----+---+
+                         |                  |
+   (offline)             <=== (register) ===>
+---------------------------------------------------
+      |                  |                  | (online)
+      +======================= (abuse) =====>
+      +==================|==>               |
+      + ...              <--- (rate limit) -+
+      | ...              |                  |
+      | ...              +----- 200 OK ----->
+      +==================|==>               |
+      +=============> X (apply rate limit)
+~~~
+{: #fig-overview title="RRL interaction overview"}
 
 ## Offline Registration {#offline}
 
@@ -246,7 +267,7 @@ are different depending on the type of proxy, though there are some general Rule
 message validation steps that apply to both. These common rules are as follows:
 
 - Check that the RateLimit-Reset field is not too far in the future.
-- Check that the RateLimit-Limit is not too high.
+- Check that the RateLimit-Limit is not too high. [[OPEN ISSUE: what does too high even mean?]]
 - Check that the RateLimit-Limit, RateLimit-Policy, and RateLimit-Reset fields do not contain any unexpected parameters.
 
 Beyond these general validation rules, the validation rules for application proxies are as follows:
@@ -355,6 +376,33 @@ for targets to ensure that state does not grow unbounded.
 This document has no IANA actions.
 
 --- back
+
+# Comparison to DOTS
+
+DDoS Open Threat Signaling (DOTS) is an architecture for establishing and maintaining
+Distributed DoS mitigations within and between domains on the Internet {{?DOTS=RFC8811}}.
+The RRL protocol shares similarities with DOTS. For example, in some respects, targets act
+as DOTS client, which detect and request mitigation of attack, and proxies act as DOTS
+servers, which are responsible for implementing mitigations. There are also some notable
+syntactical differences, e.g., the DOTS signaling protocol uses CoAP instead of HTTP.
+Importantly, however, the RRL protocol differs from DOTS, and in particular the DOTS signal
+protocol in {{!DOTS-SIGNALS=RFC9132}} in several semantically meaningful ways:
+
+1. DOTS only signals information about targets under attack, e.g., the target domain name,
+   IP address range, port range, etc., without conveying any information about specifying
+   any sort of proxy mitigation behavior. This means that it would be possible for
+   DOTS servers (proxies) to implement mitigations that could be abused to violate the privacy
+   goals of the proxy system. In contrast, RRL is more explicit in terms of how mitigations
+   are applied and, importantly, what mitigations cannot be applied.
+1. DOTS requires an active session between client (target) and server (proxy) that is kept
+   alive via heartbeat messages. Presumably this is done to ensure that the server (proxy)
+   mitigation state is associated with the client session. In contrast, RRL does not use
+   sessions to keep state and instead uses HTTP semantics for state management, i.e., the
+   server maintains a resource that authenticated clients can update as needed without
+   maintaining an active session.
+
+Note that it may be the case that these differences are not actually meaningful in practice,
+or that these are differences are based on a misunderstanding of DOTS.
 
 # Acknowledgements
 
