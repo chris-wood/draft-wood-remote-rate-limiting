@@ -4,8 +4,8 @@
 
 Network Working Group                                         C. A. Wood
 Internet-Draft                                                Cloudflare
-Intended status: Standards Track                          15 August 2023
-Expires: 16 February 2024
+Intended status: Standards Track                          16 August 2023
+Expires: 17 February 2024
 
 
                    The Remote Rate Limiting Protocol
@@ -41,7 +41,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 16 February 2024.
+   This Internet-Draft will expire on 17 February 2024.
 
 Copyright Notice
 
@@ -77,7 +77,8 @@ Table of Contents
    8.  References
      8.1.  Normative References
      8.2.  Informative References
-   Appendix A.  Acknowledgements
+   Appendix A.  Comparison to DOTS
+   Appendix B.  Acknowledgements
    Author's Address
 
 1.  Introduction
@@ -163,9 +164,11 @@ Table of Contents
    whereas a malicious target will try to use the protocol to carry out
    the following goals.
 
-   1.  De-anonymize honest clients.  The attacker aims to use the rate
-       limiting protocol to violate whatever privacy properties the
-       proxy purports to provide for its clients.
+   1.  Learn information about clients.  The attacker aims to use the
+       rate limiting protocol to learn information about the clients
+       behind a proxy.  This information might include, for example, the
+       total number of clients behind a proxy, or any other information
+       that might be useful in partitioning client anonymity sets.
 
    2.  Disproportionately and negatively impact honest clients.  The
        attacker aims to misuse the rate limiting protocol to single out
@@ -225,7 +228,25 @@ Table of Contents
    phase (Section 4.1), wherein targets obtain authentication material
    used for the online phase of the protocol, and an online phase
    (Section 4.2), wherein targets send rate limiting rules to the proxy
-   for enactment.  Details about each phase are below.
+   for enactment.  The relationship between these two phases is shown in
+   Figure 1.  Details about each phase are in the following sections.
+
+     +--------+         +-------+         +--------+
+     | Client |         | Proxy |         | Target |
+     +---+----+         +---+---+         +----+---+
+                            |                  |
+      (offline)             <=== (register) ===>
+   ---------------------------------------------------
+         |                  |                  | (online)
+         +======================= (abuse) =====>
+         +==================|==>               |
+         + ...              <--- (rate limit) -+
+         | ...              |                  |
+         | ...              +----- 200 OK ----->
+         +==================|==>               |
+         +=============> X (apply rate limit)
+
+                     Figure 1: RRL interaction overview
 
 4.1.  Offline Registration
 
@@ -359,7 +380,8 @@ Table of Contents
 
    *  Check that the RateLimit-Reset field is not too far in the future.
 
-   *  Check that the RateLimit-Limit is not too high.
+   *  Check that the RateLimit-Limit is not too high.  [[OPEN ISSUE:
+      what does too high even mean?]]
 
    *  Check that the RateLimit-Limit, RateLimit-Policy, and RateLimit-
       Reset fields do not contain any unexpected parameters.
@@ -487,6 +509,13 @@ Table of Contents
 
 8.1.  Normative References
 
+   [DOTS-SIGNALS]
+              Boucadair, M., Ed., Shallow, J., and T. Reddy.K,
+              "Distributed Denial-of-Service Open Threat Signaling
+              (DOTS) Signal Channel Specification", RFC 9132,
+              DOI 10.17487/RFC9132, September 2021,
+              <https://www.rfc-editor.org/rfc/rfc9132>.
+
    [MESSAGE-SIGNATURES]
               Backman, A., Richer, J., and M. Sporny, "HTTP Message
               Signatures", Work in Progress, Internet-Draft, draft-ietf-
@@ -522,6 +551,11 @@ Table of Contents
               DOI 10.17487/RFC9298, August 2022,
               <https://www.rfc-editor.org/rfc/rfc9298>.
 
+   [DOTS]     Mortensen, A., Ed., Reddy.K, T., Ed., Andreasen, F.,
+              Teague, N., and R. Compton, "DDoS Open Threat Signaling
+              (DOTS) Architecture", RFC 8811, DOI 10.17487/RFC8811,
+              August 2020, <https://www.rfc-editor.org/rfc/rfc8811>.
+
    [OHTTP]    Thomson, M. and C. A. Wood, "Oblivious HTTP", Work in
               Progress, Internet-Draft, draft-ietf-ohai-ohttp-09, 27
               July 2023, <https://datatracker.ietf.org/doc/html/draft-
@@ -547,7 +581,43 @@ Table of Contents
               content/uploads/2017/09/ndss2017_04A-
               3_Donenfeld_paper.pdf>.
 
-Appendix A.  Acknowledgements
+Appendix A.  Comparison to DOTS
+
+   DDoS Open Threat Signaling (DOTS) is an architecture for establishing
+   and maintaining Distributed DoS mitigations within and between
+   domains on the Internet [DOTS].  The RRL protocol shares similarities
+   with DOTS.  For example, in some respects, targets act as DOTS
+   client, which detect and request mitigation of attack, and proxies
+   act as DOTS servers, which are responsible for implementing
+   mitigations.  There are also some notable syntactical differences,
+   e.g., the DOTS signaling protocol uses CoAP instead of HTTP.
+   Importantly, however, the RRL protocol differs from DOTS, and in
+   particular the DOTS signal protocol in [DOTS-SIGNALS] in several
+   semantically meaningful ways:
+
+   1.  DOTS only signals information about targets under attack, e.g.,
+       the target domain name, IP address range, port range, etc.,
+       without conveying any information about specifying any sort of
+       proxy mitigation behavior.  This means that it would be possible
+       for DOTS servers (proxies) to implement mitigations that could be
+       abused to violate the privacy goals of the proxy system.  In
+       contrast, RRL is more explicit in terms of how mitigations are
+       applied and, importantly, what mitigations cannot be applied.
+
+   2.  DOTS requires an active session between client (target) and
+       server (proxy) that is kept alive via heartbeat messages.
+       Presumably this is done to ensure that the server (proxy)
+       mitigation state is associated with the client session.  In
+       contrast, RRL does not use sessions to keep state and instead
+       uses HTTP semantics for state management, i.e., the server
+       maintains a resource that authenticated clients can update as
+       needed without maintaining an active session.
+
+   Note that it may be the case that these differences are not actually
+   meaningful in practice, or that these are differences are based on a
+   misunderstanding of DOTS.
+
+Appendix B.  Acknowledgements
 
    This document was inspired by [OHTTP-RateLimit], which was focused on
    a variant of the problem addressed by this document and tailored

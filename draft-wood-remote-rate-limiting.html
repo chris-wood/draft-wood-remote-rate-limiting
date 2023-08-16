@@ -1054,7 +1054,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Wood</td>
-<td class="center">Expires 16 February 2024</td>
+<td class="center">Expires 17 February 2024</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1067,12 +1067,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-wood-remote-rate-limiting-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2023-08-15" class="published">15 August 2023</time>
+<time datetime="2023-08-16" class="published">16 August 2023</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2024-02-16">16 February 2024</time></dd>
+<dd class="expires"><time datetime="2024-02-17">17 February 2024</time></dd>
 <dt class="label-authors">Author:</dt>
 <dd class="authors">
 <div class="author">
@@ -1117,7 +1117,7 @@ traffic that negatively affects target services.<a href="#section-abstract-1" cl
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 16 February 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 17 February 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1209,10 +1209,13 @@ traffic that negatively affects target services.<a href="#section-abstract-1" cl
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
-            <p id="section-toc.1-1.9.1"><a href="#appendix-A" class="auto internal xref">Appendix A</a>.  <a href="#name-acknowledgements" class="internal xref">Acknowledgements</a></p>
+            <p id="section-toc.1-1.9.1"><a href="#appendix-A" class="auto internal xref">Appendix A</a>.  <a href="#name-comparison-to-dots" class="internal xref">Comparison to DOTS</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
-            <p id="section-toc.1-1.10.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-authors-address" class="internal xref">Author's Address</a></p>
+            <p id="section-toc.1-1.10.1"><a href="#appendix-B" class="auto internal xref">Appendix B</a>.  <a href="#name-acknowledgements" class="internal xref">Acknowledgements</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11">
+            <p id="section-toc.1-1.11.1"><a href="#appendix-C" class="auto internal xref"></a><a href="#name-authors-address" class="internal xref">Author's Address</a></p>
 </li>
         </ul>
 </nav>
@@ -1319,9 +1322,10 @@ including abusive behavior. Targets can also be honest or malicious. An honest
 target will faithfully use the protocol to protect itself against abuse, whereas
 a malicious target will try to use the protocol to carry out the following goals.<a href="#section-3-1" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-3-2">
-<li id="section-3-2.1">De-anonymize honest clients. The attacker aims to use the rate limiting protocol
-to violate whatever privacy properties the proxy purports to provide for its
-clients.<a href="#section-3-2.1" class="pilcrow">¶</a>
+<li id="section-3-2.1">Learn information about clients. The attacker aims to use the rate limiting
+protocol to learn information about the clients behind a proxy. This information
+might include, for example, the total number of clients behind a proxy, or any
+other information that might be useful in partitioning client anonymity sets.<a href="#section-3-2.1" class="pilcrow">¶</a>
 </li>
         <li id="section-3-2.2">Disproportionately and negatively impact honest clients. The attacker aims to
 misuse the rate limiting protocol to single out honest clients and cause service
@@ -1377,7 +1381,92 @@ presence known to targets.<a href="#section-4-3" class="pilcrow">¶</a></p>
 <p id="section-4-4">The protocol is divided into two phases: an offline registration phase (<a href="#offline" class="auto internal xref">Section 4.1</a>),
 wherein targets obtain authentication material used for the online phase of the protocol,
 and an online phase (<a href="#online" class="auto internal xref">Section 4.2</a>), wherein targets send rate limiting rules to the proxy
-for enactment. Details about each phase are below.<a href="#section-4-4" class="pilcrow">¶</a></p>
+for enactment. The relationship between these two phases is shown in <a href="#fig-overview" class="auto internal xref">Figure 1</a>.
+Details about each phase are in the following sections.<a href="#section-4-4" class="pilcrow">¶</a></p>
+<span id="name-rrl-interaction-overview"></span><div id="fig-overview">
+<figure id="figure-1">
+        <div id="section-4-5.1">
+          <div class="alignLeft art-svg artwork" id="section-4-5.1.1">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="256" width="440" viewBox="0 0 440 256" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
+              <path d="M 24,32 L 24,64" fill="none" stroke="black"></path>
+              <path d="M 56,120 L 56,240" fill="none" stroke="black"></path>
+              <path d="M 96,32 L 96,64" fill="none" stroke="black"></path>
+              <path d="M 176,32 L 176,64" fill="none" stroke="black"></path>
+              <path d="M 208,64 L 208,80" fill="none" stroke="black"></path>
+              <path d="M 208,192 L 208,224" fill="none" stroke="black"></path>
+              <path d="M 240,32 L 240,64" fill="none" stroke="black"></path>
+              <path d="M 320,32 L 320,64" fill="none" stroke="black"></path>
+              <path d="M 360,64 L 360,80" fill="none" stroke="black"></path>
+              <path d="M 360,160 L 360,192" fill="none" stroke="black"></path>
+              <path d="M 392,32 L 392,64" fill="none" stroke="black"></path>
+              <path d="M 24,32 L 96,32" fill="none" stroke="black"></path>
+              <path d="M 176,32 L 240,32" fill="none" stroke="black"></path>
+              <path d="M 320,32 L 392,32" fill="none" stroke="black"></path>
+              <path d="M 24,64 L 96,64" fill="none" stroke="black"></path>
+              <path d="M 176,64 L 240,64" fill="none" stroke="black"></path>
+              <path d="M 320,64 L 392,64" fill="none" stroke="black"></path>
+              <path d="M 208,94 L 232,94" fill="none" stroke="black"></path>
+              <path d="M 208,98 L 232,98" fill="none" stroke="black"></path>
+              <path d="M 336,94 L 360,94" fill="none" stroke="black"></path>
+              <path d="M 336,98 L 360,98" fill="none" stroke="black"></path>
+              <path d="M 8,112 L 408,112" fill="none" stroke="black"></path>
+              <path d="M 56,142 L 240,142" fill="none" stroke="black"></path>
+              <path d="M 56,146 L 240,146" fill="none" stroke="black"></path>
+              <path d="M 320,142 L 360,142" fill="none" stroke="black"></path>
+              <path d="M 320,146 L 360,146" fill="none" stroke="black"></path>
+              <path d="M 56,158 L 200,158" fill="none" stroke="black"></path>
+              <path d="M 56,162 L 200,162" fill="none" stroke="black"></path>
+              <path d="M 216,158 L 232,158" fill="none" stroke="black"></path>
+              <path d="M 216,162 L 232,162" fill="none" stroke="black"></path>
+              <path d="M 208,176 L 232,176" fill="none" stroke="black"></path>
+              <path d="M 208,208 L 248,208" fill="none" stroke="black"></path>
+              <path d="M 320,208 L 360,208" fill="none" stroke="black"></path>
+              <path d="M 56,222 L 200,222" fill="none" stroke="black"></path>
+              <path d="M 56,226 L 200,226" fill="none" stroke="black"></path>
+              <path d="M 216,222 L 232,222" fill="none" stroke="black"></path>
+              <path d="M 216,226 L 232,226" fill="none" stroke="black"></path>
+              <path d="M 56,238 L 168,238" fill="none" stroke="black"></path>
+              <path d="M 56,242 L 168,242" fill="none" stroke="black"></path>
+              <polygon class="arrowhead" points="368,208 356,202.4 356,213.6" fill="black" transform="rotate(0,360,208)"></polygon>
+              <polygon class="arrowhead" points="368,144 356,138.4 356,149.6" fill="black" transform="rotate(0,360,144)"></polygon>
+              <polygon class="arrowhead" points="368,96 356,90.4 356,101.6" fill="black" transform="rotate(0,360,96)"></polygon>
+              <polygon class="arrowhead" points="240,224 228,218.4 228,229.6" fill="black" transform="rotate(0,232,224)"></polygon>
+              <polygon class="arrowhead" points="240,160 228,154.4 228,165.6" fill="black" transform="rotate(0,232,160)"></polygon>
+              <polygon class="arrowhead" points="216,176 204,170.4 204,181.6" fill="black" transform="rotate(180,208,176)"></polygon>
+              <polygon class="arrowhead" points="216,96 204,90.4 204,101.6" fill="black" transform="rotate(180,208,96)"></polygon>
+              <polygon class="arrowhead" points="176,240 164,234.4 164,245.6" fill="black" transform="rotate(0,168,240)"></polygon>
+              <g class="text">
+                <text x="60" y="52">Client</text>
+                <text x="208" y="52">Proxy</text>
+                <text x="356" y="52">Target</text>
+                <text x="64" y="100">(offline)</text>
+                <text x="284" y="100">(register)</text>
+                <text x="208" y="132">|</text>
+                <text x="360" y="132">|</text>
+                <text x="404" y="132">(online)</text>
+                <text x="280" y="148">(abuse)</text>
+                <text x="208" y="164">|</text>
+                <text x="80" y="180">...</text>
+                <text x="264" y="180">(rate</text>
+                <text x="316" y="180">limit)</text>
+                <text x="352" y="180">-</text>
+                <text x="80" y="196">...</text>
+                <text x="80" y="212">...</text>
+                <text x="272" y="212">200</text>
+                <text x="300" y="212">OK</text>
+                <text x="360" y="228">|</text>
+                <text x="184" y="244">X</text>
+                <text x="220" y="244">(apply</text>
+                <text x="268" y="244">rate</text>
+                <text x="316" y="244">limit)</text>
+              </g>
+            </svg><a href="#section-4-5.1.1" class="pilcrow">¶</a>
+</div>
+</div>
+<figcaption><a href="#figure-1" class="selfRef">Figure 1</a>:
+<a href="#name-rrl-interaction-overview" class="selfRef">RRL interaction overview</a>
+        </figcaption></figure>
+</div>
 <div id="offline">
 <section id="section-4.1">
         <h3 id="name-offline-registration">
@@ -1499,7 +1588,7 @@ message validation steps that apply to both. These common rules are as follows:<
 <ul class="normal">
 <li class="normal" id="section-4.2.2-2.1">Check that the RateLimit-Reset field is not too far in the future.<a href="#section-4.2.2-2.1" class="pilcrow">¶</a>
 </li>
-            <li class="normal" id="section-4.2.2-2.2">Check that the RateLimit-Limit is not too high.<a href="#section-4.2.2-2.2" class="pilcrow">¶</a>
+            <li class="normal" id="section-4.2.2-2.2">Check that the RateLimit-Limit is not too high. [[OPEN ISSUE: what does too high even mean?]]<a href="#section-4.2.2-2.2" class="pilcrow">¶</a>
 </li>
             <li class="normal" id="section-4.2.2-2.3">Check that the RateLimit-Limit, RateLimit-Policy, and RateLimit-Reset fields do not contain any unexpected parameters.<a href="#section-4.2.2-2.3" class="pilcrow">¶</a>
 </li>
@@ -1656,6 +1745,10 @@ for targets to ensure that state does not grow unbounded.<a href="#section-6-2" 
 <a href="#section-8.1" class="section-number selfRef">8.1. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
         </h3>
 <dl class="references">
+<dt id="DOTS-SIGNALS">[DOTS-SIGNALS]</dt>
+        <dd>
+<span class="refAuthor">Boucadair, M., Ed.</span>, <span class="refAuthor">Shallow, J.</span>, and <span class="refAuthor">T. Reddy.K</span>, <span class="refTitle">"Distributed Denial-of-Service Open Threat Signaling (DOTS) Signal Channel Specification"</span>, <span class="seriesInfo">RFC 9132</span>, <span class="seriesInfo">DOI 10.17487/RFC9132</span>, <time datetime="2021-09" class="refDate">September 2021</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9132">https://www.rfc-editor.org/rfc/rfc9132</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 <dt id="MESSAGE-SIGNATURES">[MESSAGE-SIGNATURES]</dt>
         <dd>
 <span class="refAuthor">Backman, A.</span>, <span class="refAuthor">Richer, J.</span>, and <span class="refAuthor">M. Sporny</span>, <span class="refTitle">"HTTP Message Signatures"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-httpbis-message-signatures-19</span>, <time datetime="2023-07-26" class="refDate">26 July 2023</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-message-signatures-19">https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-message-signatures-19</a>&gt;</span>. </dd>
@@ -1687,6 +1780,10 @@ for targets to ensure that state does not grow unbounded.<a href="#section-6-2" 
         <dd>
 <span class="refAuthor">Schinazi, D.</span>, <span class="refTitle">"Proxying UDP in HTTP"</span>, <span class="seriesInfo">RFC 9298</span>, <span class="seriesInfo">DOI 10.17487/RFC9298</span>, <time datetime="2022-08" class="refDate">August 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9298">https://www.rfc-editor.org/rfc/rfc9298</a>&gt;</span>. </dd>
 <dd class="break"></dd>
+<dt id="DOTS">[DOTS]</dt>
+        <dd>
+<span class="refAuthor">Mortensen, A., Ed.</span>, <span class="refAuthor">Reddy.K, T., Ed.</span>, <span class="refAuthor">Andreasen, F.</span>, <span class="refAuthor">Teague, N.</span>, and <span class="refAuthor">R. Compton</span>, <span class="refTitle">"DDoS Open Threat Signaling (DOTS) Architecture"</span>, <span class="seriesInfo">RFC 8811</span>, <span class="seriesInfo">DOI 10.17487/RFC8811</span>, <time datetime="2020-08" class="refDate">August 2020</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8811">https://www.rfc-editor.org/rfc/rfc8811</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 <dt id="OHTTP">[OHTTP]</dt>
         <dd>
 <span class="refAuthor">Thomson, M.</span> and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"Oblivious HTTP"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-ohai-ohttp-09</span>, <time datetime="2023-07-27" class="refDate">27 July 2023</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-ohai-ohttp-09">https://datatracker.ietf.org/doc/html/draft-ietf-ohai-ohttp-09</a>&gt;</span>. </dd>
@@ -1706,19 +1803,52 @@ for targets to ensure that state does not grow unbounded.<a href="#section-6-2" 
 </dl>
 </section>
 </section>
-<div id="acknowledgements">
+<div id="comparison-to-dots">
 <section id="appendix-A">
-      <h2 id="name-acknowledgements">
-<a href="#appendix-A" class="section-number selfRef">Appendix A. </a><a href="#name-acknowledgements" class="section-name selfRef">Acknowledgements</a>
+      <h2 id="name-comparison-to-dots">
+<a href="#appendix-A" class="section-number selfRef">Appendix A. </a><a href="#name-comparison-to-dots" class="section-name selfRef">Comparison to DOTS</a>
       </h2>
-<p id="appendix-A-1">This document was inspired by <span>[<a href="#OHTTP-RateLimit" class="cite xref">OHTTP-RateLimit</a>]</span>,
+<p id="appendix-A-1">DDoS Open Threat Signaling (DOTS) is an architecture for establishing and maintaining
+Distributed DoS mitigations within and between domains on the Internet <span>[<a href="#DOTS" class="cite xref">DOTS</a>]</span>.
+The RRL protocol shares similarities with DOTS. For example, in some respects, targets act
+as DOTS client, which detect and request mitigation of attack, and proxies act as DOTS
+servers, which are responsible for implementing mitigations. There are also some notable
+syntactical differences, e.g., the DOTS signaling protocol uses CoAP instead of HTTP.
+Importantly, however, the RRL protocol differs from DOTS, and in particular the DOTS signal
+protocol in <span>[<a href="#DOTS-SIGNALS" class="cite xref">DOTS-SIGNALS</a>]</span> in several semantically meaningful ways:<a href="#appendix-A-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="appendix-A-2">
+<li id="appendix-A-2.1">DOTS only signals information about targets under attack, e.g., the target domain name,
+IP address range, port range, etc., without conveying any information about specifying
+any sort of proxy mitigation behavior. This means that it would be possible for
+DOTS servers (proxies) to implement mitigations that could be abused to violate the privacy
+goals of the proxy system. In contrast, RRL is more explicit in terms of how mitigations
+are applied and, importantly, what mitigations cannot be applied.<a href="#appendix-A-2.1" class="pilcrow">¶</a>
+</li>
+        <li id="appendix-A-2.2">DOTS requires an active session between client (target) and server (proxy) that is kept
+alive via heartbeat messages. Presumably this is done to ensure that the server (proxy)
+mitigation state is associated with the client session. In contrast, RRL does not use
+sessions to keep state and instead uses HTTP semantics for state management, i.e., the
+server maintains a resource that authenticated clients can update as needed without
+maintaining an active session.<a href="#appendix-A-2.2" class="pilcrow">¶</a>
+</li>
+      </ol>
+<p id="appendix-A-3">Note that it may be the case that these differences are not actually meaningful in practice,
+or that these are differences are based on a misunderstanding of DOTS.<a href="#appendix-A-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="acknowledgements">
+<section id="appendix-B">
+      <h2 id="name-acknowledgements">
+<a href="#appendix-B" class="section-number selfRef">Appendix B. </a><a href="#name-acknowledgements" class="section-name selfRef">Acknowledgements</a>
+      </h2>
+<p id="appendix-B-1">This document was inspired by <span>[<a href="#OHTTP-RateLimit" class="cite xref">OHTTP-RateLimit</a>]</span>,
 which was focused on a variant of the problem addressed by this document and
-tailored specifically to work within OHTTP, rather than alongside it.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
-<p id="appendix-A-2">This document was improved by contributions and feedback from Lucas Pardue and Tommy Pauly.<a href="#appendix-A-2" class="pilcrow">¶</a></p>
+tailored specifically to work within OHTTP, rather than alongside it.<a href="#appendix-B-1" class="pilcrow">¶</a></p>
+<p id="appendix-B-2">This document was improved by contributions and feedback from Lucas Pardue and Tommy Pauly.<a href="#appendix-B-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="authors-addresses">
-<section id="appendix-B">
+<section id="appendix-C">
       <h2 id="name-authors-address">
 <a href="#name-authors-address" class="section-name selfRef">Author's Address</a>
       </h2>
